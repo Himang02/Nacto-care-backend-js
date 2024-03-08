@@ -81,51 +81,23 @@ const editNurse = async (req, res, pool) => {
     sql += `WHERE id = '${req.params.id}'`;
 
     console.log(sql);
-    // await pool.query(sql, (err, result) => {
-    //     if (err) {
-    //         console.error('Error executing SQL commands', err);
-    //     } else {
-    //         console.log(result);
-    //         console.log(result.rows);
-    //         res.json(result.rows);
-    //     }
-    //     // console.log(1);
-    // });
-    // await pool.query(`\nSELECT * FROM nurse WHERE id='${req.params.id}';`, (err, result) => {
-    //     // console.log(2);
-    //     if (err) {
-    //         console.error('Error executing SQL commands', err);
-    //     } else {
-    //         // console.log(result);
-    //         // console.log(result.rows);
-    //         res.json(result.rows);
-    //     }
-    // });
-
-    try {
-        await pool.query(sql, (err, result) => {
-            if (err) {
-                console.error('Error executing SQL commands', err);
-            }
-        });
-    } finally {
-        await pool.query(`\nSELECT * FROM nurse WHERE id='${req.params.id}';`, (err, result) => {
-            //     // console.log(2);
-            if (err) {
-                console.error('Error executing SQL commands', err);
-            } else {
-                // console.log(result);
-                // console.log(result.rows);
-                res.json(result.rows);
-            }
-        });
-    }
-
+    await pool.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error executing SQL commands', err);
+        } else {
+            console.log('Nurse updated');
+        }
+    });
+    await pool.query(`\nSELECT * FROM nurse WHERE id='${req.params.id}';`, (err, result) => {
+        if (err) {
+            console.error('Error executing SQL commands', err);
+        } else {
+            console.log(result.rows);
+            const nurseObject = result.rows[0];
+            const newNurseObject = Object.assign({}, nurseObject, req.body);
+            res.json(newNurseObject);
+        }
+    });
 }
 
 module.exports = { getNurses, createNurse, deleteNurse, editNurse }
-
-/* 1. getNurses
-2. createNurse, editNurse, deleteNurse
-
-*/
