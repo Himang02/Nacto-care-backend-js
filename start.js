@@ -10,6 +10,7 @@ const pool = new Pool({
 });
 const routesNurse = require('./routes/nurse');
 const routesPatient = require('./routes/patient');
+const router = require('./routes/router');
 
 pool.connect((err, client, done) => {
     if (err) {
@@ -24,36 +25,7 @@ app.use(morgan('dev'));
 // Parse JSON request bodies
 app.use(bodyParser.json());
 
-app.get('/getNurses', (req, res) => {
-    routesNurse.getNurses(req, res, pool);
-})
-app.post('/createNurse', (req, res) => {
-    routesNurse.createNurse(req, res, pool);
-})
-app.delete('/deleteNurse/:id', (req, res) => {
-    routesNurse.deleteNurse(req, res, pool);
-    // console.log(req.params);
-})
-app.put('/editNurse/:id', (req, res) => {
-    routesNurse.editNurse(req, res, pool);
-
-})
-
-
-app.get('/getPatients', (req, res) => {
-    routesPatient.getPatients(req, res, pool);
-})
-app.post('/createPatient', (req, res) => {
-    routesPatient.createPatient(req, res, pool);
-})
-app.delete('/deletePatient/:id', (req, res) => {
-    routesPatient.deletePatient(req, res, pool);
-    // console.log(req.params);
-})
-app.put('/editPatient/:id', (req, res) => {
-    routesPatient.editPatient(req, res, pool);
-
-})
+router(app, pool);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
