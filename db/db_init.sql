@@ -25,9 +25,10 @@ CREATE TABLE IF NOT EXISTS patients (
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    dob DATE,
     phone_number VARCHAR(10)
 );
 
 INSERT INTO patients (name, email, phone_number) VALUES
-    ('Jane Smith', 'jane.smith@example.com', '9876543210'),
-    ('Bob Johnson', 'bob.johnson@example.com', '5551112233');
+    ('Jane Smith', 'jane.smith@example.com', '9876543210', '1990-05-15'),
+    ('Bob Johnson', 'bob.johnson@example.com', '5551112233', '1990-05-15');
