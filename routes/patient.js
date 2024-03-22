@@ -2,8 +2,9 @@ const getPatients = (req, res, pool) => {
     pool.query('SELECT * FROM patients', (err, result) => {
         if (err) {
             console.error('Error executing SQL commands', err);
+            res.status(500).json({ error: 'Your request broke our servers :( Working to quickly bring them back to life.' });
         } else {
-            res.json(result.rows);
+            res.status(200).json(result.rows);
         }
     });
 }
@@ -23,8 +24,9 @@ const createPatient = (req, res, pool) => {
 `, (err, result) => {
         if (err) {
             console.error('Error executing SQL commands', err);
+            res.status(500).json({ error: 'Your request broke our servers :( Working to quickly bring them back to life.' });
         } else {
-            res.json(result.rows);
+            res.status(201).json(result.rows);   
         }
     });
 
@@ -39,8 +41,9 @@ const deletePatient = (req, res, pool) => {
         WHERE patient_id = '${req.params['id']}'`, (err, result) => {
         if (err) {
             console.error('Error executing SQL commands', err);
+            res.status(500).json({ error: 'Your request broke our servers :( Working to quickly bring them back to life.' });
         } else {
-            res.json(result.rows);
+            res.status(200).json(result.rows);
         }
     });
 
@@ -72,26 +75,25 @@ const editPatient = async (req, res, pool) => {
     sql += `WHERE patient_id = '${req.params.id}'`;
 
     console.log(sql);
-
-
-    try {
-        await pool.query(sql, (err, result) => {
-            if (err) {
-                console.error('Error executing SQL commands', err);
-            }
-        });
-    } finally {
-        await pool.query(`\nSELECT * FROM patients WHERE patient_id='${req.params.id}';`, (err, result) => {
-            //     // console.log(2);
-            if (err) {
-                console.error('Error executing SQL commands', err);
-            } else {
-                // console.log(result);
-                // console.log(result.rows);
-                res.json(result.rows);
-            }
-        });
-    }
+    await pool.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error executing SQL commands', err);
+            res.status(500).json({ error: 'Your request broke our servers :( Working to quickly bring them back to life.' });
+        } else {
+            console.log('Patient updated');
+        }
+    });
+    await pool.query(`\nSELECT * FROM patients WHERE id='${req.params.id}';`, (err, result) => {
+        if (err) {
+            console.error('Error executing SQL commands', err);
+            res.status(500).json({ error: 'Your request broke our servers :( Working to quickly bring them back to life.' });
+        } else {
+            console.log(result.rows);
+            const patientObject = result.rows[0];
+            const newPatientObject = Object.assign({}, patientObject, req.body);
+            res.status(200).json(newPaitentObject);
+        }
+    });
 
 }
 
